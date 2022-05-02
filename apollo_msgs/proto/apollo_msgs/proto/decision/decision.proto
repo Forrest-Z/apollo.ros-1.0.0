@@ -1,0 +1,317 @@
+syntax = "proto3";
+
+package apollo.decision;
+
+import "apollo_msgs/proto/common/header.proto";
+import "apollo_msgs/proto/common/geometry.proto";
+import "apollo_msgs/proto/prediction/prediction_obstacle.proto";
+import "apollo_msgs/proto/canbus/chassis.proto";
+
+message Range {
+    double start = 1;
+    double end = 2;
+}
+
+message TargetLane {
+    // lane id
+    string id = 1;
+    double start_s = 2;  // in meters
+    double end_s = 3;    // in meters
+    double speed_limit = 4; // in m/s
+}
+
+message ObjectIgnore {
+}
+
+enum StopReasonCode {
+    STOP_REASON_HEAD_VEHICLE = 0;
+    STOP_REASON_DESTINATION = 1;
+    STOP_REASON_PEDESTRIAN = 2;
+    STOP_REASON_OBSTACLE = 3;
+    STOP_REASON_PREPARKING = 4;
+    STOP_REASON_SIGNAL = 100;
+    STOP_REASON_STOP_SIGN = 101;
+    STOP_REASON_YIELD_SIGN = 102;
+    STOP_REASON_CLEAR_ZONE = 103;
+    STOP_REASON_CROSSWALK = 104;
+}
+
+message ObjectStop {
+    // stop at least distance_s before the object
+    double distance_s = 1;  // in meters
+    Range preferred_distance_s = 2; // NOT SUPPORTED FIELD
+    StopReasonCode reason_code = 3;
+    apollo.common.PointENU stop_point = 4; // stop point
+}
+
+message ObjectNudge {
+    // minimum lateral distance with the object
+    double distance_l = 1;  // in meters
+    enum Type {
+        LEFT_NUDGE = 0;
+        RIGHT_NUDGE = 1;
+    };
+    Type type = 2;
+    Range preferred_distance_l = 3; // NOT SUPPORTED FIELD
+}
+
+message ObjectYield {
+    // minimum longitutional distance with the object
+    double distance_s = 1;  // in meters
+    Range preferred_distance_s = 2; // NOT SUPPORTED FIELD
+    apollo.common.PointENU yield_point = 3;
+}
+
+message ObjectFollow {
+    // minimum longitutional distance with the object
+    double distance_s = 1;  // in meters
+    Range preferred_distance_s = 2; // NOT SUPPORTED FIELD
+    apollo.common.PointENU follow_point = 3;
+}
+
+message ObjectOvertake {
+    // minimum longitutional distance with the object
+    double distance_s = 1;  // in meters
+    Range preferred_distance_s = 2;  // NOT SUPPORTED FIELD
+    apollo.common.PointENU overtake_point = 3;
+}
+
+message ObjectSidePass {
+    // follow or lead the object from side lane keeping a longitutional distance to it.
+    // if you want to cut in the neighbored lane, you may need to sidepass a neighbored object
+    // first.
+    double distance_s = 1;  // in meters
+    Range preferred_distance_s = 2; // in meters, relative to the object
+    enum Type {
+        FOLLOW = 0;  //follow the object from side lane
+        LEAD = 1;  //lead the object from side lane
+    };
+    Type type = 3;
+}
+
+message ObjectAvoid {
+}
+
+message ObjectDecisionType {
+    oneof object_tag {
+        ObjectIgnore ignore = 1;
+        ObjectStop stop = 2;
+        ObjectFollow follow = 3;
+        ObjectYield yield = 4;
+        ObjectOvertake overtake = 5;
+        ObjectNudge nudge = 6;
+        ObjectSidePass sidepass = 7;
+        ObjectAvoid avoid = 8;  // unified object decision while estop
+    }
+}
+
+message ObjectDecision {
+    enum ObjectType {
+        PREDICTION = 0;
+        PERCEPTION = 1;
+        VIRTUAL = 2;
+    }
+    apollo.prediction.PredictionObstacle prediction = 1;
+    string id = 2;
+    ObjectType type = 3;
+    ObjectDecisionType decision = 4;
+    repeated ObjectDecisionType object_decision = 5;
+}
+
+message ObjectDecisions {
+    repeated ObjectDecision decision = 1;
+}
+
+// stop at distance_s on lane
+message StopLine {
+    string lane_id = 1;
+    double distance_s = 2;
+}
+
+message MainStop {
+    // stop at or before distance_s relative to the lane_id
+    StopLine enforced_line = 1;
+    StopLine preferred_start = 2; // NOT SUPPORTED FIELD
+    StopLine preferred_end = 3; // NOT SUPPORTED FIELD
+    string reason = 4;
+    StopReasonCode reason_code = 5;
+    //when stopped, the front center of vehicle should be at this point
+    apollo.common.PointENU stop_point = 6;
+    //when stopped, the heading of the vehicle should be stop_heading
+    double stop_heading = 7;
+}
+
+message EmergencyStopHardBrake {
+}
+
+message EmergencyStopCruiseToStop {
+}
+
+message MainEmergencyStop {
+    // unexpected event happened, human driver is required to take over the vehicle.
+    string reason = 1;
+    enum ReasonCode {
+        ESTOP_REASON_INTERNAL_ERR = 0;
+        ESTOP_REASON_COLLISION = 1;
+        ESTOP_REASON_ST_FIND_PATH = 2;
+        ESTOP_REASON_ST_MAKE_DECISION = 3;
+        ESTOP_REASON_SENSOR_ERROR = 4;
+    }
+    ReasonCode reason_code = 2;
+    oneof task {
+        EmergencyStopHardBrake hard_brake = 3;  // hard brake
+        EmergencyStopCruiseToStop cruise_to_stop = 4;  // cruise to stop
+    }
+}
+
+message MainCruise {
+    // cruise current lane
+}
+
+message MainChangeLane {
+    enum Type {
+        LEFT = 0;
+        RIGHT = 1;
+    };
+    Type type = 1;
+    repeated TargetLane default_lane = 2;
+    MainStop default_lane_stop = 3;
+    MainStop target_lane_stop = 4;
+}
+
+message MainMissionComplete {
+    // arrived at routing destination
+}
+
+message MainNotReady {
+    // decision system is not ready.
+    // e.g. wait for routing data.
+    string reason = 1;
+}
+
+message MainParking {
+    enum Type {
+        FORWARD_PARKING = 0;
+        REVERSE_PARKING = 1;
+    };
+    Type type = 1;
+    // the heading of the final car position
+    double heading = 2;
+    // stop point
+    apollo.common.PointENU stop_point = 3;
+    // the polygon of the parking spot
+    repeated apollo.common.PointENU parking_polygon = 4;
+}
+
+message MainDecision {
+    oneof task {
+        MainCruise cruise = 1;
+        MainStop stop = 2;
+        MainEmergencyStop estop = 3;
+        MainChangeLane change_lane = 4;
+        MainMissionComplete mission_complete = 6;
+        MainNotReady not_ready = 7;
+        MainParking parking = 8;
+    }
+    repeated TargetLane target_lane = 5;
+}
+
+message MasterVehicleDebug {
+    apollo.common.PointENU position = 1;
+    string current_lane_id = 2;
+    double lane_s = 3;
+    double lane_l = 4;
+    double route_s = 5;
+    double route_l = 6;
+    double heading = 7;
+    double heading_speed = 8;
+    double heading_acceleration = 9;
+    Range route_s_range = 10;
+    Range route_l_range = 11;
+}
+
+message ObjectDebug {
+    string id = 1;
+    string path_id = 2;
+    Range route_s = 3;
+    Range route_l = 4;
+    bool on_route = 5;
+    string lane_id = 6;
+    double lane_s = 7;
+    bool on_lane = 8;
+    double path_speed = 9;
+    // x is time (t), y is s
+    repeated apollo.common.Point3D st_region =  10;
+}
+
+message LatencyStats {
+    double total_time_ms = 1;
+    double sensor_read_time_ms = 2;
+    double adc_prepare_time_ms = 3;
+    double obj_prepare_time_ms = 4;
+    double world_rule_time_ms = 5;
+    double st_graph_time_ms = 6;
+    // time diff between gateway_msg_receive_timestamp and gateway_msg_timestamp
+    double gateway_receive_delay_ms = 8;
+    // time diff between perception_msg_receive_timestamp and perception_msg_timestamp
+    double perception_receive_delay_ms = 9;
+    // time diff between prediction_msg_receive_timestamp and prediction_msg_timestamp
+    double prediction_receive_delay_ms = 10;
+    // time diff between signal_msg_receive_timestamp and signal_msg_timestamp
+    double signal_receive_delay_ms = 11;
+    // time interval in ms between perception last and its previous msg
+    double perception_interval_ms = 12;
+    // time interval in ms between prediction last and its previous msg
+    double prediction_interval_ms = 13;
+}
+
+message Stats {
+    LatencyStats latency_stats = 1;
+}
+
+message ModuleDebug {
+  uint32 gateway_sequence_num = 1;
+  uint32 perception_sequence_num = 2;
+  uint32 prediction_sequence_num = 3;
+  uint32 signal_sequence_num = 4;
+}
+
+// next id: 8
+message Debug {
+    MasterVehicleDebug master_vehicle = 1;
+    // stores current frame's original decision when current decision has be modified.
+    // E.g., when current decision is the first encountered estop, we may use
+    // a valid history decision to replace current decision, but the estop decision
+    // will be stored in original_decision
+    MainDecision original_decision = 2;
+    repeated ObjectDebug object = 3;
+    // some meta data will be dumped into debug per sample frequency:
+    // e.g. every 500 decision, meta data will be dumped once.
+    bytes map_version = 5;
+    bytes decision_version = 7;
+
+    // record per module debug info
+    ModuleDebug module_debug = 6;
+}
+
+// The light signal of the adc
+// naming reference https://en.wikipedia.org/wiki/Automotive_lighting
+message LightSignal {
+    bool emergency = 1; // hazard signal
+    enum TurnSignal {
+        NO_TURN = 0;
+        LEFT_TURN = 1;
+        RIGHT_TURN = 2;
+    };
+    TurnSignal turn_signal = 2;
+}
+
+message DecisionResult {
+    apollo.common.Header header = 1;
+    ObjectDecisions object_decision = 2;
+    MainDecision main_decision = 3;
+    Debug debug = 4;
+    Stats stats = 6;
+    apollo.canbus.Signal signal = 7;
+    LightSignal light_signal = 5;
+}

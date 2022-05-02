@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package apollo.control;
+
+import "apollo_msgs/proto/canbus/chassis.proto";
+import "apollo_msgs/proto/control/pad_msg.proto";
+import "apollo_msgs/proto/control/lat_controller_conf.proto";
+import "apollo_msgs/proto/control/lon_controller_conf.proto";
+
+message ControlConf {
+  enum ControllerType {
+    LAT_CONTROLLER = 0;
+    LON_CONTROLLER = 1;
+  };
+
+  double control_period = 1;
+  double max_planning_interval_sec = 2;
+  double max_planning_delay_threshold = 3;
+  // 0 - manual; 1 - auto_drive; 2 - speed_only; 3 - steer_only
+  apollo.canbus.Chassis.DrivingMode driving_mode = 4;
+  // 0: stop, at first should stop, then receive pad msg to start
+  apollo.control.DrivingAction action = 5;
+  double soft_estop_brake = 6;
+  repeated ControllerType active_controllers = 7;
+  int32 max_steering_percentage_allowed = 8;
+  double max_status_interval_sec = 9;
+
+  apollo.control.LatControllerConf lat_controller_conf = 10;
+  apollo.control.LonControllerConf lon_controller_conf = 11;
+
+  double trajectory_period = 12;
+  double chassis_period = 13;
+  double localization_period = 14;
+}

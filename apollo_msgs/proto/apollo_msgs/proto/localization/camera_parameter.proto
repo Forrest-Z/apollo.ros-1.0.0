@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package apollo.localization;
+
+message CameraIntrinsicParameter {
+  // focus x pixels
+  double fx = 1; // pixels
+  // focus y pixels
+  double fy = 2; // pixels
+  // center x pixels
+  double cx = 3; // pixels
+  // center y pixels
+  double cy = 4; // pixels
+}
+
+message CameraExtrinsicParameter {
+  // camera rotation parameters [-pi - pi]
+  double roll = 1;
+  double pitch = 2;
+  double yaw = 3;
+  // coordinates in the vehicle coordinates [meters]
+  double tx = 4; // meters
+  double ty = 5; // meters
+  double tz = 6; // meters
+}
+
+message CameraParameter {
+  CameraIntrinsicParameter intrisic_parameter = 1;
+  CameraExtrinsicParameter extrisic_parameter = 2;
+}

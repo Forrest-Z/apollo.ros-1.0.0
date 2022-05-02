@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <arg name="loop_rate" default="50.0"/>
+  <arg name="simulation_frame_id" default="base_link"/>
+  <arg name="map_frame_id" default="map"/>
+  <arg name="use_sim_time" default="false" />
+
+  <node pkg="apollo_simulator" type="apollo_simulator" name="apollo_simulator" output="screen">
+    <rosparam file="$(find apollo_simulator)/param/simulator_params.yaml" command="load"/>
+
+    <param name="use_sim_time" value="$(arg use_sim_time)"/>
+    <param name="loop_rate" value="$(arg loop_rate)"/>
+    <param name="simulation_frame_id" value="$(arg simulation_frame_id)"/>
+    <param name="map_frame_id" value="$(arg map_frame_id)"/>
+    <param name="adapter_config_path" value="$(find apollo_simulator)/conf/adapter.conf"/>
+
+    <remap from="/initial_pose" to="/initialpose"/>
+    <remap from="/vehicle_cmd" to="/control/cmd_vel"/>
+    <remap from="/apollo_simulator/current_pose" to="/current_pose"/>
+    <remap from="/apollo_simulator/current_speed" to="/current_velocity"/>
+    <remap from="/apollo_simulator/current_state" to="/current_state"/>
+  </node>
+
+  <node pkg="rviz" type="rviz" name="simulator_rviz" args="-d $(find apollo_simulator)/rviz/simulation.rviz"/>
+</launch>

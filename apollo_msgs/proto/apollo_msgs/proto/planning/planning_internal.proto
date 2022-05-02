@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package apollo.planning_internal;
+
+import "apollo_msgs/proto/common/header.proto";
+import "apollo_msgs/proto/decision/decision.proto";
+import "apollo_msgs/proto/localization/localization.proto";
+import "apollo_msgs/proto/localization/pose.proto";
+import "apollo_msgs/proto/perception/perception_obstacle.proto";
+import "apollo_msgs/proto/prediction/prediction_obstacle.proto";
+
+message PlanningObstacle {
+  int32 perception_id = 1;
+  string decision_id = 2;
+
+  apollo.perception.Point position = 3;  // obstacle position in the world coordinate system.
+  double theta = 4;  // heading in the world coordinate system
+  apollo.perception.Point velocity = 5;  // obstacle velocity.
+  // obstacle speed ( == sqrt(velocity.x^2 + velocity.y^2)
+  double speed = 6;
+
+  // Size of obstacle bounding box.
+  double length = 7;  // obstacle length.
+  double width = 8;   // obstacle width.
+  double height = 9;  // obstacle height.
+
+  // obstacle corner points.
+  repeated apollo.perception.Point polygon_point = 10;
+  // duration of an obstacle since detection.
+  double tracking_time = 11;
+
+  // perception timestamp in ms
+  double perception_timestamp = 12;
+  // object type in perception
+  apollo.perception.PerceptionObstacle.Type perception_object_type = 13;
+
+  double prediction_timestamp = 14;  // prediction_timestamp in ms
+  // from prediction
+  repeated apollo.prediction.Trajectory prediction_trajectory = 15;
+
+  // object type in decision
+  apollo.decision.ObjectDecision.ObjectType decision_object_type = 16;
+  apollo.decision.ObjectDecisionType object_decision = 17;
+  repeated apollo.decision.ObjectDecisionType planning_object_decision = 18;
+}
+
+message Debug {
+  enum ErrorCode {
+    OK = 0; 
+    ERR_NOT_READY = 1; 
+    ERR_ESTOP = 2; 
+    ERR_PATH_OPTIMIZER = 3;
+    ERR_SPEED_OPTIMIZER = 4;
+    ERR_ST_GRAPH = 5;
+    ERR_SANITY_CHECK = 6;
+  }
+
+  /*
+      PLEASE add id here
+      id = 1: st_graph_info
+  */
+  message DebugMessage {
+    ErrorCode error_code = 1;
+    int32 id = 2;
+    oneof debug_string {
+      string trace = 3;
+      string info = 4;
+      string warn = 5;
+      string error = 6;
+      string fatal = 7;
+    }
+  }
+
+  ErrorCode error_code = 1;
+  PlanningData planning_data = 2;
+  repeated DebugMessage debug_message = 3;
+}
+
+message PlanningData {
+  apollo.common.Header header = 1;
+  apollo.localization.Pose init_status = 2;  // initial status of adc
+  apollo.decision.MainDecision main_decision = 3;  // from decision
+  // processed planning_obstacles
+  repeated PlanningObstacle planning_obstacle = 4;
+  apollo.decision.LightSignal light_signal = 5;  // light signal from decision
+}

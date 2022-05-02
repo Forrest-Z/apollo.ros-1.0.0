@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <include file="$(find apollo_planning)/launch/planning.launch"/>
+  <include file="$(find apollo_control)/launch/control.launch"/>
+
+  <include file="$(find apollo_simulator)/launch/simulator.launch"/>
+</launch>

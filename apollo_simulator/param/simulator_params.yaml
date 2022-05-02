@@ -1,0 +1,32 @@
+loop_rate: 100.0
+footprint: [[-1.0, 0.8],[3.0, 0.8], [3.0, -0.8], [-1.0, -0.8]]
+wheelbase: 2.85
+simulation_frame_id: base_link
+map_frame_id: map
+add_measurement_noise: true
+
+# Option for vehicle_model_type:
+# - IDEAL_STEER : reads velocity command. The steering and velocity changes exactly the same as commanded.
+# - DELAY_STEER : reads velocity command. The steering and velocity changes with delay model.
+# - DELAY_STEER_ACC : reads acceleration command. The steering and acceleration changes with delay model.
+vehicle_model_type: DELAY_STEER_ACC
+
+vel_lim: 4.0
+vel_time_constant: 0.61
+vel_time_delay: 0.25
+
+accel_rate: 7.0
+acc_time_delay: 0.1
+acc_time_constant: 0.1
+
+steer_lim: 1.0
+steer_rate_lim: 5.0
+steer_time_constant: 0.27
+steer_time_delay: 0.24
+deadzone_delta_steer: 0.00
+
+pos_noise_stddev: 0.01
+vel_noise_stddev: 0.0
+rpy_noise_stddev: 0.0001
+angvel_noise_stddev: 0.0
+steer_noise_stddev: 0.0001

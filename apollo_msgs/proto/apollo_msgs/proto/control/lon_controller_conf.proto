@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package apollo.control;
+
+import "apollo_msgs/proto/control/calibration_table.proto";
+
+message PidConf {
+  bool integrator_enable = 1;
+  double integrator_saturation_level = 2;
+  double kp = 3;
+  double ki = 4;
+  double kd = 5;
+}
+
+message FilterConf {
+  int32 cutoff_freq = 1;
+}
+
+// controller param
+message LonControllerConf {
+  double ts = 1; // longitudinal controller sampling time
+
+  double brake_deadzone = 2;
+  double throttle_deadzone = 3;
+  double speed_controller_input_limit = 4;
+  double station_error_limit = 5;
+  double preview_window = 6;
+  double standstill_acceleration = 7;
+
+  PidConf station_pid_conf = 8;
+  PidConf low_speed_pid_conf = 9;
+  PidConf high_speed_pid_conf = 10;
+  double switch_speed = 11; // low/high speed controller switch speed
+
+  FilterConf throttle_filter_conf = 12;
+  FilterConf brake_filter_conf = 13;
+  FilterConf acceleration_filter_conf = 14;
+
+  calibrationtable.ControlCalibrationTable calibration_table = 15;
+}

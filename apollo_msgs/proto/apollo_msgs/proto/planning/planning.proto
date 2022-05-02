@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package apollo.planning;
+
+import "apollo_msgs/proto/common/header.proto";
+import "apollo_msgs/proto/canbus/chassis.proto";
+import "apollo_msgs/proto/planning/planning_internal.proto";
+
+message ADCTrajectoryPoint {
+    double x = 1;  // in meters.
+    double y = 2;  // in meters.
+    double z = 3;  // height in meters.
+
+    double speed = 6;  // speed, in meters / second
+    double acceleration_s = 7; // acceleration in s direction
+    double curvature = 8; // curvature (k = 1/r), unit: (1/meters)
+    double curvature_change_rate = 9; // change of curvature in unit s (dk/ds)
+    double relative_time = 10; // in seconds relative time (relative_time = time_of_this_state - timestamp_in_header)
+    double theta = 11; // relative to absolute coordinate system
+    double accumulated_s = 12; // calculated from the first point in this trajectory
+
+    double s = 4;  // in meters, reference to route SL-coordinate
+    double l = 5;  // in meters, reference to route SL-coordinate
+}
+
+message ADCSignals {
+    enum SignalType {
+        LEFT_TURN = 0;
+        RIGHT_TURN = 1;
+        LOW_BEAM_LIGHT = 2;
+        HIGH_BEAM_LIGHT = 3;
+        FOG_LIGHT = 4;
+        EMERGENCY_LIGHT = 5;
+    }
+    repeated SignalType signal = 1;
+}
+
+message EStop {
+    bool is_estop = 1; // is_estop == true when emergency stop is required
+}
+
+message ADCPathPoint {
+    double x = 1; // in meters
+    double y = 2; // in meters
+    double z = 3; // in meters
+    double curvature = 4; // curvature (k = 1/r), unit: (1/meters)
+    double heading = 5; // relative to absolute coordinate system
+}
+
+message ADCTrajectory {
+    apollo.common.Header header = 1;
+    double total_path_length = 2; // in meters
+    double total_path_time = 3; // in seconds
+    repeated ADCTrajectoryPoint adc_trajectory_point = 4;
+    EStop estop = 6;
+    repeated ADCPathPoint adc_path_point = 7;
+    bool is_replan = 9; // is_replan == true mean replan triggered
+    apollo.canbus.Chassis.GearPosition gear = 10; // Specify trajectory gear
+    apollo.planning_internal.Debug debug = 8;
+    apollo.canbus.Signal signal = 11;
+
+    ADCSignals signals = 5;
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node pkg="apollo_decision" type="apollo_decision" name="decision" args = "
+    --flagfile=$(find apollo_decision)/conf/decision.conf
+    --adapter_config_path=$(find apollo_decision)/conf/adapter.conf"
+  output="screen"/>
+</launch>

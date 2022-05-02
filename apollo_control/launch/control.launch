@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node pkg="apollo_control" type="apollo_control" name="control" args = "
+    --flagfile=$(find apollo_control)/conf/control.conf
+    --adapter_config_path=$(find apollo_control)/conf/adapter.conf
+    --control_conf_file=$(find apollo_control)/conf/lincoln.pb.txt"
+  output="screen"/>
+</launch>

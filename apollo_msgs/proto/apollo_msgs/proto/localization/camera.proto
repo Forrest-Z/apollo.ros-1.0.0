@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package apollo.localization;
+
+import "apollo_msgs/proto/common/header.proto";
+
+message Camera {
+  apollo.common.Header header = 1;
+
+  // The image from camera
+  bytes image = 2;
+  // The image width
+  uint32 width = 3;
+  // The image height
+  uint32 height = 4;
+}

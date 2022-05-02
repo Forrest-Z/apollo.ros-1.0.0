@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node pkg="apollo_planning" type="apollo_planning" name="planning" args = "
+    --flagfile=$(find apollo_planning)/conf/planning.conf
+    --adapter_config_path=$(find apollo_planning)/conf/adapter.conf
+    --rtk_trajectory_filename=$(find apollo_planning)/data/garage.csv"
+  output="screen"/>
+</launch>

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package apollo.control.calibrationtable;
+
+message ControlCalibrationTable {
+	repeated ControlCalibrationInfo calibration = 1;
+}
+
+message ControlCalibrationInfo {
+	double speed = 1;
+	double acceleration = 2;
+	double command = 3;
+}

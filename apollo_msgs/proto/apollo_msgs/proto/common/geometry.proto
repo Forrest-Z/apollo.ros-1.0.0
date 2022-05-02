@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package apollo.common;
+
+// A point in the map reference frame. The map defines an origin, whose coordinate is (0, 0, 0).
+// Most modules, including localization, perception, and prediction, generate results based on the
+// map reference frame.
+// Currently, the map uses Universal Transverse Mercator (UTM) projection. See the link below for
+// the definition of map origin.
+//   https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system
+// The z field of PointENU can be omitted. If so, it is a 2D location and we do not care its height.
+message PointENU {
+    double x = 1;  // East from the origin, in meters.
+    double y = 2;  // North from the origin, in meters.
+    double z = 3;  // Up from the WGS-84 ellipsoid, in meters.
+}
+
+// A point in the global reference frame. Similar to PointENU, PointLLH allows omitting the height
+// field for representing a 2D location.
+message PointLLH {
+    double lon = 1;  // Longitude in degrees, ranging from -180 to 180.
+    double lat = 2;  // Latitude in degrees, ranging from -90 to 90.
+    double height = 3;  // WGS-84 ellipsoid height in meters.
+}
+
+// A general 2D point. Its meaning and units depend on context, and must be explained in comments.
+message Point2D {
+    double x = 1;
+    double y = 2;
+}
+
+// A general 3D point. Its meaning and units depend on context, and must be explained in comments.
+message Point3D {
+    double x = 1;
+    double y = 2;
+    double z = 3;
+}
+
+// A unit quaternion that represents a spatial rotation. See the link below for details.
+//   https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+// The scalar part qw can be omitted. In this case, qw should be calculated by
+//   qw = sqrt(1 - qx * qx - qy * qy - qz * qz).
+message Quaternion {
+    double qx = 1;
+    double qy = 2;
+    double qz = 3;
+    double qw = 4;
+}

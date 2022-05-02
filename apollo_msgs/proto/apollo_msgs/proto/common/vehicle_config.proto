@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package apollo.common.config;
+
+import "apollo_msgs/proto/common/header.proto";
+import "apollo_msgs/proto/common/config_extrinsics.proto";
+
+// Vehicle parameters shared among several modules.
+// By default, all are measured with the SI units (meters, meters per second,
+// etc.).
+message VehicleParam {
+  // Car center point is car reference point, i.e., center of rear axle.
+  double front_edge_to_center = 1;
+  double back_edge_to_center = 2;
+  double left_edge_to_center = 3;
+  double right_edge_to_center = 4;
+
+  double length = 5;
+  double width = 6;
+  double height = 7;
+
+  double min_turn_radius = 8;
+  double max_acceleration = 9;
+  double max_deceleration = 10;
+
+  // The following items are used to compute trajectory constraints in planning.
+  // vehicle max steer angle
+  double max_steer_angle = 11;
+  // vehicle max steer rate; how fast can the steering wheel turn.
+  double max_steer_angle_rate = 12;
+  // ratio between the turn of steering wheel and the turn of wheels
+  double steer_ratio = 13;
+  // the distance between the front and back wheels
+  double wheel_base = 14;
+  // Tire effective rolling radius (vertical distance between the wheel center
+  // and the ground).
+  double wheel_rolling_radius = 15;
+}
+
+message VehicleConfig {
+  apollo.common.Header header = 1;
+  VehicleParam vehicle_param = 2;
+  Extrinsics extrinsics = 3;
+}

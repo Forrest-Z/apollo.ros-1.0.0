@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package apollo.prediction;
+
+import "apollo_msgs/proto/common/header.proto";
+import "apollo_msgs/proto/perception/perception_obstacle.proto";
+
+message TrajectoryPoint {
+    double x = 1;  // in meters.
+    double y = 2;  // in meters.
+    double z = 3;  // height in meters.
+    double velocity = 4;  // velocity, in meters / second
+    double t = 5; // in seconds,  relative to the time_stamp of this message (t = t_this_state - t_timestamp)
+    double heading = 6; // heading in angle
+}
+
+message Trajectory {
+    double probability = 1; //probability of this trajectory
+    repeated TrajectoryPoint trajectory_point = 2;
+}
+
+message PredictionObstacle {
+    apollo.perception.PerceptionObstacle perception_obstacle = 1;
+    double time_stamp = 2; // GPS time in seconds
+    double predicted_period = 3; // the length of the time for this prediction (e.g. 10s)
+    repeated Trajectory trajectory = 4; // can have multiple trajectories per obstacle
+}
+
+message PredictionObstacles {
+    apollo.common.Header header = 1; // timestamp is included in header
+    repeated PredictionObstacle prediction_obstacle = 2; // make prediction for multiple obstacles
+    apollo.perception.PerceptionErrorCode perception_error_code = 3; // perception error code
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node pkg="apollo_localization" type="apollo_localization" name="localization" args = "
+    --flagfile=$(find apollo_localization)/conf/localization.conf
+    --rtk_adapter_config_file=$(find apollo_localization)/conf/rtk_adapter.conf
+    --camera_adapter_config_file=$(find apollo_localization)/conf/camera_adapter.conf
+    --localization_config_file=$(find apollo_localization)/conf/localization_config.pb.txt"
+  output="screen"/>
+</launch>
