@@ -25,7 +25,7 @@ apollo_ros
 - 使用原生ros（基于noetic）替代apollo中更改的ros
 - 使用ros pkg封装apollo中每个module
 - 使用cmake进行编译
-- 将protobuff版本提升到3.6.0
+- 将protobuff版本提升到3.6.1
 - 使用ros中的`std_msgs/String`替代apollo的`pd_msgs/xxx`消息
 - 增加pnc仿真工具`apollo_simulator`
 
