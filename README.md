@@ -61,13 +61,13 @@ apollo_ros
   sudo apt install libgtest-dev 
   ```
 
-- protobuff 3.6.0
+- protobuff 3.6.1
 
   ```shell
-  wget https://github.com/google/protobuf/releases/download/v3.6.0/protobuf-cpp-3.6.0.tar.gz
-  tar xzf protobuf-cpp-3.6.0.tar.gz
+  wget https://github.com/google/protobuf/releases/download/v3.6.1/protobuf-cpp-3.6.1.tar.gz
+  tar xzf protobuf-cpp-3.6.1.tar.gz
   
-  pushd protobuf-3.6.0
+  pushd protobuf-3.6.1
   ./configure --prefix=/usr
   make -j8
   make install
