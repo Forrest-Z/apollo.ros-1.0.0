@@ -1,4 +1,4 @@
 | Github account | name |
 |---|---|
-| Forrest-Z | Zuhong Zhou |
+| Forrest-Z | Forrest |
 

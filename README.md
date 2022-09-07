@@ -89,4 +89,4 @@ roslaunch apollo_simulator simulation.launch
 
 ## 维护者
 
-[@周祖鸿](709335543@qq.com)
+[@Forrest](709335543@qq.com)
