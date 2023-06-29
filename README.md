@@ -29,7 +29,7 @@ apollo_ros
 - 使用ros中的`std_msgs/String`替代apollo的`pd_msgs/xxx`消息
 - 增加pnc仿真工具`apollo_simulator`
 
->此移植版本，能很好的将自己的算法增加到框架中，应用于机器人或者无人驾驶中。同时，由于apollo中的模块抽象，每个模块之间和中间件没有耦合，中间件能很容易从ros1移植到ros2、LCM等，具体开发可根据自己的需求进行魔改。
+>此移植版本，能很好的将自己的算法增加到框架中，应用于机器人或者无人驾驶中。同时，由于apollo中的模块抽象，每个模块之间和中间件没有耦合，中间件能很容易从ros1移植到ros2、LCM等，具体开发可根据自己的需求进行魔改。博文介绍见https://blog.csdn.net/Forrest_Z/article/details/124543719?spm=1001.2014.3001.5501
 
 ## 安装
 
